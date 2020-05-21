@@ -25,5 +25,4 @@ ggplot(df, aes(x=id, y= dminutes(timestamp_5))) + geom_point()
 #Plot Boxplot
 ggplot(df, aes(y=dminutes(timestamp_5))) + geom_boxplot()
 
-#Plot Histogram
-ggplot(df, aes(x=dminutes(timestamp_5))) + geom_histogram(binwidth=50)
+
