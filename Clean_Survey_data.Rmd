@@ -3,9 +3,9 @@ title: "Warum du deine Online-Befragungsdaten bereinigen solltest"
 author: "Thomas Halamuda"
 date: "21 5 2020"
 output:
-  word_document: default
-  pdf_document: default
   html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 
@@ -74,8 +74,7 @@ colnames(df) <- gsub("Zeitstempel", "timestamp", colnames(df))
 
 #Transmute timestamps to lubridate duration
 df <- df %>%
-      select(starts_with("timestamp")) %>%
-      transmute_all(duration)
+      mutate_at(vars(starts_with("timestamp")), duration) 
 
 
 #Create unique ID
@@ -118,8 +117,30 @@ df$tag_time_over_60 <- ifelse(df$timestamp_5 >= dminutes(60), 1, 0 )
 df$tag_time_under_q05 <-  ifelse(df$timestamp_5 <= q[1], 1, 0 ) # Alle im unteren 5% Quantil
 df$tag_time_under_q10 <-  ifelse(df$timestamp_5 <= q[2], 1, 0 ) # Alle im unteren 10% Quantil
 df$tag_time_under_q15 <-  ifelse(df$timestamp_5 <= q[3], 1, 0 ) # Alle im unteren 1% Quantil
+df$tag_time_over_q95 <-  ifelse(df$timestamp_5 <= q[20], 1, 0 ) # Alle im unteren 1% Quantil
+df$tag_time_over_q90 <-  ifelse(df$timestamp_5 <= q[19], 1, 0 ) # Alle im unteren 1% Quantil
+df$tag_time_over_q85 <-  ifelse(df$timestamp_5 <= q[18], 1, 0 ) # Alle im unteren 1% Quantil
 ```
 
-Meist sind solche Tags schon vollkomen ausreichend. Doch Vorsicht: Die Befragungszeit hängt von vielen Faktoren ab, die es manchmal Wert sind berücksichtigt zu werden. Z.b. Sind die "Digital Natives", also die jüngeren in der Regel schneller im Antwortverhalten als 60 Jährige. Eines der wichtigsten Fehlerquellen ist es: Wenn aufgrund der Fragebogenstruktur eine Befragte größere Frageblöcke gar nicht gesehen haben, dann ist es auch klar, dass sie den Fragebogen schneller durchgehen konnten! Dies würde die Ergebnisse massiv verfälschen. 
+Meist sind solche Tags schon vollkomen ausreichend. Wie schnell ein Fragebogen absolviert werden kann, wird immer ein Stück subjektiv bleiben!
 
-Um dies zu deutlichen betrachte man die Boxplots nach Alter und einer Filtervariable, die dafür sorgt, dass der Befragte einige Fragen überspringt. 
+```{r barplot_n}
+
+```
+
+
+Doch Vorsicht: Die Befragungszeit hängt von vielen Faktoren ab, die es manchmal Wert sind berücksichtigt zu werden. Z.b. Sind die "Digital Natives", also die jüngeren in der Regel schneller im Antwortverhalten als 60 Jährige. Eines der wichtigsten Fehlerquellen ist es: Wenn aufgrund der Fragebogenstruktur eine Befragte größere Frageblöcke gar nicht gesehen haben, dann ist es auch klar, dass sie den Fragebogen schneller durchgehen konnten! Dies würde die Ergebnisse massiv verfälschen. 
+
+Um dies zu deutlichen betrachte man die Boxplots nach Alter und einer Filtervariable, die dafür sorgt, dass der Befragte einige Medienfragen überspringt. Der Datensatz wurde zur besseren übersicht nur auf Personen unter 30 Minuten beschränkt.
+
+
+
+```{r tag_time_total_split}
+df %>%
+  filter(timestamp_5 <= dminutes(30)) %>%
+  ggplot(aes(y=timestamp_5, x= as.factor(age_group) ,fill= as.factor(media_filter))) + geom_boxplot()
+
+
+```
+
+Die Grafik zeigt deutlich, dass der Befragungsfilter für kürzere Antwortzeiten sorgt! Würde man an dieser Stelle bei den "Turbos"zu stark aussieben erhält man zu hohe Werte in der Mediennnutzung! 
