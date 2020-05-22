@@ -1,28 +1,30 @@
 ---
-title: "Clean Survery Data from Online Access Panels"
+title: "Warum du deine Online-Befragungsdaten bereinigen solltest"
 author: "Thomas Halamuda"
 date: "21 5 2020"
-output: html_document
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
 ---
 
-```{r setup, include=FALSE}
 
-```
 
 ## R Markdown
 
-Der Artikel geht folgenden Fragen nach: 
-Ich habe eine Studie in einem Online-Access Panel (OAP) durchgeführt. 
--	Wie überprüfe ich die Befragung auf „schlechte“ Befragte und warum sollte ich das tun?
--	Wer ist ein „schlechter“ Befragter?
+### 1. Wann ist der Artikel für dich relevant?
+Du hast eine gerade eine Online-Studie erhoben, etwa aus einem Online-Access Panel (OAP) und möchtest die Daten analysieren. Der Artikel beantwortet dir folgende Fragen:
+-	Ist ein Cleaning der Daten überhaupt notwendig?
 -	Welche Analysen sollte ich vornehmen?
--	Ist es den Aufwand wert??
-1.	Motivation
-Stellen Sie sich vor sie sie befinden sich an einer Straßenkreuzung in Florenz und fragen einen Passanten nach dem Weg zum Palazzo Vechio? Wonach beurteilen Sie diesen Passanten? Sie mustern die Kreuzung nach Personen, die auf den ersten Blick,
--	Nicht zu beschäftigt, 
+-	Ist es den Aufwand wert?
+
+
+### 2. Deine Motivation
+Stellt Dir vor du befindest dich an einer Straßenkreuzung in Florenz und fragst einen Passanten nach dem Weg zum Palazzo Vechio? Wonach beurteilst du diesen Passanten? Ganz intuitiv musterst du die Person danach, ob sie, 
+-	nicht zu beschäftigt, 
 -	Aufgeschlossen und ehrlich,
--	Und kompetent erscheinen,
-in der Hoffnung die richtige Antwort zu erhalten. Bei einer Befragung gehen Sie nicht anders vor, nur mit dem Unterschied, dass Sie nicht Ihre 5 Sinne zur Verfügung haben, sondern lediglich die Daten vor Ihnen. Diese 3 Befragungstypen sollten daher im finalen Datensatz eliminiert werden, denn:  Kein Rat ist besser als schlechter Rat!
+-	Und kompetent ist.
+Bei deiner Befragung gehst du nicht anders vor, nur mit dem Unterschied, dass du nciht deine 5 Sinne zur Verfügung hast, sondern lediglich die Daten vor Dir. Diese 3 Befragungstypen sollten daher im finalen Datensatz eliminiert werden, denn:  Kein Rat ist besser als schlechter Rat!
 
 1.	Der Bounty Hunter: Dieser Typ tritt am häufigsten auf. Er hat kein grundlegendes Interesse an der Befragung, für Ihn geht es ausschließlich um die ausgeschütteten Incentives des Panelbetreiber, wie Gutscheine, Schecks etc..
 Er versucht aufgrund seines Fokus auf das Incentive, die Befragung in der Regel möglichst schnell und mit wenig Aufwand abzuschließen, an der Befragung hat er aber kein Interesse.  Im Grunde handelt er wie ein rationaler Unternehmer, manche neigen sogar dazu, zu Täuschen und zu betrügen, um das Incentive schneller zu erhalten. 
@@ -33,25 +35,27 @@ Abhängig von dem OAP, dem Studien- und Fragebogendesign würde ich die Quote an
 
 
 
-2.	Die Möglichkeiten
+### 2. Was du tun kannst.
 
-Zum Bereinigen des Datensatzes wird folgend vorgegangen: 
-1.	Analyse der Befragungszeit
-2.	Konsistenzchecks
-3.	Varianz
+Analsiere den Datensatzes anhand der:  
+1. Befragungszeit,
+2. Varianz,
+3. Konsistenz im Antwortverhalten,
 
-Anhand eines typischen Datensatzes werden die Maßnahmen zur Erkennung „schlechter“ Befragter dargestellt und bewertet.
+Anhand eines typischen Datensatzes werden die Maßnahmen zur Erkennung „schlechter“ Befragter dargestellt und bewertet. Der gesamte R-Code kann unter folgendem GitHub-Repo nachvollzuogen werden: 
+https://github.com/Vogelweide1985/Clean_survey_data_of_OAPs
 
 
-4.	Zeit ist kostbar – für jeden von uns!
+### 3. Zeit ist kostbar – für jeden von uns!
 
 Die Analyse der Befragungszeit einer Person ist mit Abstand die wichtigste Variable. Warum? Insgesamt ist die verbliebene Zeit im Fragebogen ein Indikator für das Maß an Interesse des Befragten. Vor allem Der Bounty Hunter hat ein Interesse daran, die Studie möglichst schnell abzuschließen, um sein Return on Investment (ROI) pro Studie zu erhöhen. Einige wissen jedoch, dass Sie es nicht übertreiben dürfen und achten darauf, es mit dem „Durchklicken“ nicht zu übertreiben.  
 Fangen wir mit der einfachsten Analyse an: 
 
 
-
-
-
+```{r options}
+knitr::opts_chunk$set(echo = F)
+knitr::opts_chunk$set(warning = F)
+```
 
 ```{r init}
 
