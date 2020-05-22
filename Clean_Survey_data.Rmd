@@ -3,9 +3,9 @@ title: "Warum du deine Online-Befragungsdaten bereinigen solltest"
 author: "Thomas Halamuda"
 date: "21 5 2020"
 output:
-  word_document: default
-  pdf_document: default
   html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 
@@ -140,10 +140,7 @@ Um dies zu deutlichen betrachte man die Boxplots nach Alter und einer Filtervari
 ```{r tag_time_total_split}
 df %>%
   filter(timestamp_5 <= dminutes(30)) %>%
-  ggplot(aes(y=timestamp_5, x= as.factor(age_group) ,fill= as.factor(media_filter))) + geom_boxplot(fill= cd_main[1:3])  +
-  cd_theme() 
-
-
+  ggplot(aes(y=timestamp_5, x= as.factor(age_group), fill= as.factor(media_filter))) + geom_boxplot()  + scale_fill_manual(values = cd_main)  +  cd_theme()  
 ```
 
 Die Grafik zeigt deutlich, dass der Befragungsfilter für kürzere Antwortzeiten sorgt! Würde man an dieser Stelle bei den "Turbos"zu stark aussieben erhält man zu hohe Werte in der Mediennnutzung! 
