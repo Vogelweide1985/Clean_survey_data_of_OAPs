@@ -10,8 +10,6 @@ output:
 
 
 
-## R Markdown
-
 ### 1. Wann ist der Artikel für dich relevant?
 Du hast eine gerade eine Online-Studie erhoben, etwa aus einem Online-Access Panel (OAP) und möchtest die Daten analysieren. Der Artikel beantwortet dir folgende Fragen:
 -	Ist ein Cleaning der Daten überhaupt notwendig?
@@ -89,14 +87,14 @@ Zunächst erstellen wir uns einen Klassicshen Boxplot:
 ```{r first_plot}
 
 #Plot Boxplot
-ggplot(df, aes(y=dminutes(timestamp_5))) + geom_boxplot() +cd_theme()  + 
+ggplot(df, aes(y=dminutes(timestamp_5))) + geom_boxplot( color= cd_main[1]) +cd_theme()  + 
   ggtitle("Petal and sepal length of iris") + labs(y="Petal length (cm)", x = "Sepal length (cm)")
 ```
 
 Ups! Manchmal hat man eine Visualisierung in Kopf, die am Ende nicht funktioniert. Setzt man einen Summary Befehl auf sieht man, dass einige Personen sehr sehr lange für die Befragung gebraucht haben. 
 Man beachte die große Diskrepanz zwischen dem Median und dem Mittelwert. In der Regel ist der Mittelwert also ein schlechter Referenzwert, stattdessen sollte eher der Median betrachtet werden. 
 ```{r summary_stats_total}
-kable(summary(df$timestamp_5))
+kable(summary(df$timestamp_5), col.names = "Lagemaße")
 #kable(quantile(df$timestamp_5, seq(0, 1, 0.1)))
 ```
 
@@ -104,7 +102,7 @@ Der maximal Wert liegt in dieser Studie bei einer Woche, d.h. die Personen hat d
 
 Der Scatter Plot verdeutlicht nochmal diesen Sachverhalt: Auf der X-Achse sind die individuellen Befragten abgebildet auf der Y-Achse die benötigte Zeit in Sekunden.
 ```{r scatter_total_plot}
-ggplot(df, aes(x=id, y= dminutes(timestamp_5))) + geom_point() +cd_theme() 
+ggplot(df, aes(x=id, y= dminutes(timestamp_5))) + geom_point(color = cd_main[1]) +cd_theme() 
 ```
 
 Die prinzipielle Vorgehensweise lautet, erstmal alle Verdächtigen Befragten zu "taggen". Bei der Zeitstempelanalyse gibt es verschiedene Möglichkeiten:
@@ -142,8 +140,8 @@ Um dies zu deutlichen betrachte man die Boxplots nach Alter und einer Filtervari
 ```{r tag_time_total_split}
 df %>%
   filter(timestamp_5 <= dminutes(30)) %>%
-  ggplot(aes(y=timestamp_5, x= as.factor(age_group) ,fill= as.factor(media_filter))) + geom_boxplot()  +
-  cd_theme() + scale_fill_brewer(palette = "RdYlBu")
+  ggplot(aes(y=timestamp_5, x= as.factor(age_group) ,fill= as.factor(media_filter))) + geom_boxplot(fill= cd_main[1:3])  +
+  cd_theme() 
 
 
 ```
