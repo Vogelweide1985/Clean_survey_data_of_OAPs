@@ -3,9 +3,9 @@ title: "Warum du deine Online-Befragungsdaten bereinigen solltest"
 author: "Thomas Halamuda"
 date: "21 5 2020"
 output:
-  html_document: default
-  pdf_document: default
   word_document: default
+  pdf_document: default
+  html_document: default
 ---
 
 
@@ -62,6 +62,9 @@ knitr::opts_chunk$set(warning = F)
 library(tidyverse)
 library(lubridate)
 library(knitr)
+
+source("corporate_design.R")
+
 #Load Data
 df <- readRDS("./public_data/survey.rds")
 
@@ -86,7 +89,8 @@ Zunächst erstellen wir uns einen Klassicshen Boxplot:
 ```{r first_plot}
 
 #Plot Boxplot
-ggplot(df, aes(y=dminutes(timestamp_5))) + geom_boxplot()
+ggplot(df, aes(y=dminutes(timestamp_5))) + geom_boxplot() +cd_theme()  + scale_colour_manual("red", aesthetics = c("colour", "fill")) + 
+  ggtitle("Petal and sepal length of iris") + labs(y="Petal length (cm)", x = "Sepal length (cm)")
 ```
 
 Ups! Manchmal hat man eine Visualisierung in Kopf, die am Ende nicht funktioniert. Setzt man einen Summary Befehl auf sieht man, dass einige Personen sehr sehr lange für die Befragung gebraucht haben. 
@@ -100,7 +104,7 @@ Der maximal Wert liegt in dieser Studie bei einer Woche, d.h. die Personen hat d
 
 Der Scatter Plot verdeutlicht nochmal diesen Sachverhalt: Auf der X-Achse sind die individuellen Befragten abgebildet auf der Y-Achse die benötigte Zeit in Sekunden.
 ```{r scatter_total_plot}
-ggplot(df, aes(x=id, y= dminutes(timestamp_5))) + geom_point()
+ggplot(df, aes(x=id, y= dminutes(timestamp_5))) + geom_point() +cd_theme() 
 ```
 
 Die prinzipielle Vorgehensweise lautet, erstmal alle Verdächtigen Befragten zu "taggen". Bei der Zeitstempelanalyse gibt es verschiedene Möglichkeiten:
@@ -138,7 +142,8 @@ Um dies zu deutlichen betrachte man die Boxplots nach Alter und einer Filtervari
 ```{r tag_time_total_split}
 df %>%
   filter(timestamp_5 <= dminutes(30)) %>%
-  ggplot(aes(y=timestamp_5, x= as.factor(age_group) ,fill= as.factor(media_filter))) + geom_boxplot()
+  ggplot(aes(y=timestamp_5, x= as.factor(age_group) ,fill= as.factor(media_filter))) + geom_boxplot()  +
+  cd_theme() + scale_fill_brewer( palette = "Dark2")
 
 
 ```
