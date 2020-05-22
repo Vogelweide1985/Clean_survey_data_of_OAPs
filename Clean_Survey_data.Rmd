@@ -89,7 +89,7 @@ Zunächst erstellen wir uns einen Klassicshen Boxplot:
 ```{r first_plot}
 
 #Plot Boxplot
-ggplot(df, aes(y=dminutes(timestamp_5))) + geom_boxplot() +cd_theme()  + scale_colour_manual("red", aesthetics = c("colour", "fill")) + 
+ggplot(df, aes(y=dminutes(timestamp_5))) + geom_boxplot() +cd_theme()  + 
   ggtitle("Petal and sepal length of iris") + labs(y="Petal length (cm)", x = "Sepal length (cm)")
 ```
 
@@ -116,14 +116,14 @@ Exemplarischen werden jetzt folgende Tags gesetzt
 ```{r tag_time_total, echo = T}
 q <- quantile(df$timestamp_5, seq(0,1, 0.05)) # Get Quantile
 df$tag_time_under_5 <- ifelse(df$timestamp_5 <= dminutes(5), 1, 0 )
-df$tag_time_over_45 <- ifelse(df$timestamp_5 >= dminutes(45), 1, 0 )
-df$tag_time_over_60 <- ifelse(df$timestamp_5 >= dminutes(60), 1, 0 )
+df$tag_time_over_45 <- ifelse(df$timestamp_5 >= dminutes(30), 1, 0 )
+df$tag_time_over_60 <- ifelse(df$timestamp_5 >= dminutes(45), 1, 0 )
 df$tag_time_under_q05 <-  ifelse(df$timestamp_5 <= q[1], 1, 0 ) # Alle im unteren 5% Quantil
 df$tag_time_under_q10 <-  ifelse(df$timestamp_5 <= q[2], 1, 0 ) # Alle im unteren 10% Quantil
 df$tag_time_under_q15 <-  ifelse(df$timestamp_5 <= q[3], 1, 0 ) # Alle im unteren 1% Quantil
-df$tag_time_over_q95 <-  ifelse(df$timestamp_5 <= q[20], 1, 0 ) # Alle im unteren 1% Quantil
-df$tag_time_over_q90 <-  ifelse(df$timestamp_5 <= q[19], 1, 0 ) # Alle im unteren 1% Quantil
-df$tag_time_over_q85 <-  ifelse(df$timestamp_5 <= q[18], 1, 0 ) # Alle im unteren 1% Quantil
+df$tag_time_over_q95 <-  ifelse(df$timestamp_5 >= q[20], 1, 0 ) # Alle im unteren 1% Quantil
+df$tag_time_over_q90 <-  ifelse(df$timestamp_5 >= q[19], 1, 0 ) # Alle im unteren 1% Quantil
+df$tag_time_over_q85 <-  ifelse(df$timestamp_5 >= q[18], 1, 0 ) # Alle im unteren 1% Quantil
 ```
 
 Meist sind solche Tags schon vollkomen ausreichend. Wie schnell ein Fragebogen absolviert werden kann, wird immer ein Stück subjektiv bleiben!
@@ -143,7 +143,7 @@ Um dies zu deutlichen betrachte man die Boxplots nach Alter und einer Filtervari
 df %>%
   filter(timestamp_5 <= dminutes(30)) %>%
   ggplot(aes(y=timestamp_5, x= as.factor(age_group) ,fill= as.factor(media_filter))) + geom_boxplot()  +
-  cd_theme() + scale_fill_brewer( palette = "Dark2")
+  cd_theme() + scale_fill_brewer(palette = "RdYlBu")
 
 
 ```
