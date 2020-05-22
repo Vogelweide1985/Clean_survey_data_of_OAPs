@@ -8,7 +8,8 @@ cd_theme <- function(base_size = 11,
                     base_family = base_family,
                     base_line_size = base_line_size) %+replace%
             theme(plot.background = element_rect(
-                  fill = "#F1FFE7"
+                  fill = "#F1FFE7", 
+                  linetype = "blank",
                   ),
                   plot.title = element_text(
                         color = rgb(25, 43, 65, maxColorValue = 255), 
