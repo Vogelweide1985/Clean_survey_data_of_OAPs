@@ -30,3 +30,7 @@ cd_theme <- function(base_size = 11,
             )
 }
 
+
+cd_main <- c( "#337CA0", "#C1FF31", "#DAC4F7", "#CF5C36", "#F1FFE7")
+cd_gradient <- c("337CA0", "438B94", "539987", "62A87B", "72B66F", "82C562", 
+                 "92D356", "92D356", "A1E24A", "B1F03D", "C1FF31")
