@@ -20,7 +20,7 @@ Du hast eine gerade eine Online-Studie erhoben, etwa aus einem Online-Access Pan
 
 
 ### 2. Deine Motivation
-Stellt Dir vor du befindest dich an einer Straßenkreuzung in Florenz und fragst einen Passanten nach dem Weg zum Palazzo Vechio? Wonach beurteilst du diesen Passanten? Ganz intuitiv musterst du die Person danach, ob sie, 
+Stellt Dir vor Du befindest dich an einer Straßenkreuzung in Florenz und fragst einen Passanten nach dem Weg zum Palazzo Vechio? Wonach beurteilst du diesen Passanten? Ganz intuitiv musterst du die Person danach, ob sie, 
 -	nicht zu beschäftigt, 
 -	Aufgeschlossen und ehrlich,
 -	Und kompetent ist.
@@ -52,24 +52,21 @@ Die Analyse der Befragungszeit einer Person ist mit Abstand die wichtigste Varia
 Fangen wir mit der einfachsten Analyse an: 
 
 
-```{r options}
+```{r options, include = FALSE}
 knitr::opts_chunk$set(echo = F)
 knitr::opts_chunk$set(warning = F)
 ```
 
-```{r init}
+```{r init, include = FALSE}
 
 library(tidyverse)
 library(lubridate)
-
+library(knitr)
 #Load Data
 df <- readRDS("./public_data/survey.rds")
 
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
 
 ```{r preprocessing}
 #Renaming cols
@@ -85,6 +82,8 @@ df <- df %>%
 df$id <- 1:length(1:nrow(df))
 ```
 
+Zunächst erstellen wir uns einen Klassicshen Boxplot:
+
 ```{r first_plot}
 
 #Plot Boxplot
@@ -92,11 +91,35 @@ ggplot(df, aes(y=dminutes(timestamp_5))) + geom_boxplot()
 ```
 
 Ups! Manchmal hat man eine Visualisierung in Kopf, die am Ende nicht funktioniert. Setzt man einen Summary Befehl auf sieht man, dass einige Personen sehr sehr lange für die Befragung gebraucht haben. 
-Man beachte die große Diskrepanz zwischen Median (``` median(df$timestamp_5)```) und Mittelwert (``` mean(df$timestamp_5)```).  
+Man beachte die große Diskrepanz zwischen dem Median und dem Mittelwert. In der Regel ist der Mittelwert also ein schlechter Referenzwert, stattdessen sollte eher der Median betrachtet werden. 
 ```{r summary_stats_total}
-#Plot Boxplot
-summary(df$timestamp_5)
-quantile(df$timestamp_5, seq(0, 1, 0.1))
+kable(summary(df$timestamp_5))
+#kable(quantile(df$timestamp_5, seq(0, 1, 0.1)))
 ```
-#Plot ID vs. total_time
+
+Der maximal Wert liegt in dieser Studie bei einer Woche, d.h. die Personen hat die Befragung nach 7 Tagen wieder aufgenommen! Ein Klassiker, denn einige Personen unterbrechen die Befragung für längere Zeit um sie später wieder aufzunehmen. Wir kommen gleich dazu, wie man mit diesen Personen umgeht.
+
+Der Scatter Plot verdeutlicht nochmal diesen Sachverhalt: Auf der X-Achse sind die individuellen Befragten abgebildet auf der Y-Achse die benötigte Zeit in Sekunden.
+```{r scatter_total_plot}
 ggplot(df, aes(x=id, y= dminutes(timestamp_5))) + geom_point()
+```
+
+Die prinzipielle Vorgehensweise lautet, erstmal alle Verdächtigen Befragten zu "taggen". Bei der Zeitstempelanalyse gibt es verschiedene Möglichkeiten:
+- Tags setzen anhand von Min/Max- Grenzen nach inhaltlichen Kriterien oder Erfahrungswerten. Z.b. Alle Personen taggen unter 5 Minuten und über 45 Minuten. 
+- Tags setzen anhand statistischer Maßgaben. Z.B. Extremwerte/Außreiser laut Boxplot Berechnung oder Quantilen.
+
+Exemplarischen werden jetzt folgende Tags gesetzt
+
+```{r tag_time_total, echo = T}
+q <- quantile(df$timestamp_5, seq(0,1, 0.05)) # Get Quantile
+df$tag_time_under_5 <- ifelse(df$timestamp_5 <= dminutes(5), 1, 0 )
+df$tag_time_over_45 <- ifelse(df$timestamp_5 >= dminutes(45), 1, 0 )
+df$tag_time_over_60 <- ifelse(df$timestamp_5 >= dminutes(60), 1, 0 )
+df$tag_time_under_q05 <-  ifelse(df$timestamp_5 <= q[1], 1, 0 ) # Alle im unteren 5% Quantil
+df$tag_time_under_q10 <-  ifelse(df$timestamp_5 <= q[2], 1, 0 ) # Alle im unteren 10% Quantil
+df$tag_time_under_q15 <-  ifelse(df$timestamp_5 <= q[3], 1, 0 ) # Alle im unteren 1% Quantil
+```
+
+Meist sind solche Tags schon vollkomen ausreichend. Doch Vorsicht: Die Befragungszeit hängt von vielen Faktoren ab, die es manchmal Wert sind berücksichtigt zu werden. Z.b. Sind die "Digital Natives", also die jüngeren in der Regel schneller im Antwortverhalten als 60 Jährige. Eines der wichtigsten Fehlerquellen ist es: Wenn aufgrund der Fragebogenstruktur eine Befragte größere Frageblöcke gar nicht gesehen haben, dann ist es auch klar, dass sie den Fragebogen schneller durchgehen konnten! Dies würde die Ergebnisse massiv verfälschen. 
+
+Um dies zu deutlichen betrachte man die Boxplots nach Alter und einer Filtervariable, die dafür sorgt, dass der Befragte einige Fragen überspringt. 
